@@ -1,6 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 
 #define TEST_FAILURE -1
 #define TEST_CORRECT 0
@@ -161,8 +162,58 @@ void print(tree* root, int k)
 }
 
 
+void insert_test()
+{
+	tree* root = create(5);
+	root = insert(root, 4);
+	root = insert(root, 6);
+
+	assert(root->left->n, 4);
+	assert(root->left->n, 6);
+
+	printf("INSERT test is PASSED\n");
+}
+
+void search_test() 
+{
+	tree* root = create(9);
+	root->left = create(6);
+	root->right = create(15);
+	root->left->left = create(3);
+	root->left->right = create(5);
+	root = splay(root, 15);
+	assert(root->n == 15);
+	assert(root->left->n == 9);
+	assert(root->left->left->n == 6);
+
+	printf("SEARCH test is PASSED\n");
+
+
+}
+
+void delete_test() 
+{
+	tree* root = create(9);
+	root->left = create(6);
+	root->right = create(15);
+	root->left->left = create(3);
+	root->left->right = create(5);
+	print(root, 1);
+
+	assert(root->left->n, 5);
+	assert(root->left->left, 3);
+
+	printf("DELETE test is PASSED\n");
+}
+
 int main() {
 	puts("Krekhov_d_5030102_20003_lab2_var8\n");
+
+	delete_test();
+
+	search_test();
+	insert_test();
+	/*
 	tree* root = create(100);
 	root = insert(root, 20);
 	root = insert(root, 30);
@@ -178,7 +229,8 @@ int main() {
 	root = search(root, 40);
 	printf("after search\n");
 	print(root, 1);
-	return 0;
+	*/
+	
 
 	return 0;
 }
