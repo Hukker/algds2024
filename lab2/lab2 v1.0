@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TEST_FAIL -1
+#define TEST_FAILURE -1
 #define TEST_CORRECT 0
 
 typedef struct tree {
@@ -13,46 +13,81 @@ typedef struct tree {
 
 //tree* root = NULL;
 
-//tree* create(int val) {
-//	tree* new_tree = (tree*)malloc(sizeof(tree));
-//	new_tree->left = NULL;
-//	new_tree->right = NULL;
-//	new_tree->n = val;
-//	return new_tree;
-//}
-
-tree* search(tree* node, int val) 
+tree* create(int val) 
 {
-	if (val == node->n && node == NULL) {
-		return node;
-	}
-	if (val < node->n) {
-		return search(node->left, val);
-	}
-	else if (val > node->n) {
-		return search(node->right, val);
-	}
+	tree* new_tree = (tree*)malloc(sizeof(tree));
+	new_tree->left = NULL;
+	new_tree->right = NULL;
+	new_tree->n = val;
+	return new_tree;
 }
 
-tree* insert(tree* node, int val) 
+tree* right_rotate(tree* node_cur) 
 {
-	if (node == NULL) {
-		tree* new_tree = (tree*)malloc(sizeof(tree));
-		new_tree->left = NULL;
-		new_tree->right = NULL;
-		new_tree->n = val;
-		return insert(new_tree, val);
-	}
-	if (val < node->n) {
-		node->left = insert(node->left, val);
-	}
-	if (val < node->n) {
-		node->right = insert(node->right, val);
-	}
-	return node;
+	tree* node1 = node_cur->left;
+	node_cur->left = node1->right;
+	node1->right = node_cur;
+	return node1;
 }
 
-/*
+tree* left_rotate(tree* cur) 
+{
+	tree* tmp = cur->right;
+	cur->right = tmp->left;
+	tmp->left = cur;
+	return tmp;
+}
+
+tree* splay(tree* root, int val) 
+{
+	if (root == NULL || root->n == val) {
+		return root;
+	}
+
+	if (root->n > val) {
+		if (root->left == NULL) {
+			return root;
+		}
+
+		if (root->left->n > val) {
+			root->left->left = splay(root->left->left, val);
+			root = right_rotate(root);
+		}
+		else if (root->left->n < val) 
+		{
+			root->left->right = splay(root->left->right, val);
+			if (root->left->right != NULL) {
+				root->left = left_rotate(root->left);
+			}
+		}
+		return (root->left == NULL) ? root : right_rotate(root);
+	}
+
+	else 
+	{
+		if (root->right == NULL) return root;
+		if (root->right->n > val)
+		{
+			root->right->left = splay(root->right->left, val);
+			if (root->right->left != NULL)
+				root->right = right_rotate(root->right);
+		}
+		else if (root->right->n < val)
+		{
+			root->right->right = splay(root->right->right, val);
+			root = left_rotate(root);
+		}
+		return (root->right == NULL) ? root : left_rotate(root);
+	}
+
+}
+
+tree* search(tree* root, int val)
+{
+	return splay(root, val);
+}
+
+
 tree* search_min(tree* node) 
 {
 	if (node == NULL) {
@@ -92,31 +127,55 @@ tree* delete(tree* node, int val)
 	return node;
 }
 
-*/
 
+
+void print(tree* root, int val)
+{
+	int i;
+	if (root != NULL)
+	{
+		print(root->right, val + 1);
+		for (i = 0; i < val; i++) { 
+			putchar(' ');
+		}
+		printf("%d\n", root->n);
+		print(root->left, val + 1);
+	}
+}
+/*
 void insert_test() 
 {
 	tree* root1 = NULL;
 
-	root1 = insert(root1, 5);
 	root1 = insert(root1, 4);
-	root1 = insert(root1, 7);
+	root1 = insert(root1, 5);
+	root1 = insert(root1, 3);
 
-	printf("%d\n", root1->n);
-	printf("%d\n", root1->left->n);
-	printf("%d\n", root1->right->n);
-	if (root1->right == 6 && root1->left == 4) {
-		puts("insert test is correct");
+	//print(root1, 2);
+
+	
+	if (root1->right->n == 5 && root1->left->n == 3) {
+		puts("INSERT test is CORRECT");
 	}
 	else {
-		exit(TEST_FAIL);
+		printf("INSERT test is FAILURE");
+		exit(TEST_FAILURE);
 	}
-	//printf("%d\n", root1->right->n);
-	//printf("%d\n", root1->left->n);
-
 }
-
+*/
 int main() {
-	insert_test();
+	puts("Krekhov_d_5030102_20003_lab2_var8\n");
+	tree* root = create(1);
+	root->left = create(2);
+	root->right = create(3);
+	root->left->left = create(4);
+	root->left->left->left = create(5);
+	root->left->left->left->left = create(6);
+	print(root, 1);
+	root = search(root, 5);
+	printf(" after search\n");
+	print(root, 3);
 
+
+	return 0;
 }
