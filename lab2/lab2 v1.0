@@ -22,6 +22,24 @@ tree* create(int val)
 	return new_tree;
 }
 
+tree* insert(tree* node, int val)
+{
+	if (node == NULL) {
+		tree* new_tree = (tree*)malloc(sizeof(tree));
+		new_tree->left = NULL;
+		new_tree->right = NULL;
+		new_tree->n = val;
+		return insert(new_tree, val);
+	}
+	if (val < node->n) {
+		node->left = insert(node->left, val);
+	}
+	if (val > node->n) {
+		node->right = insert(node->right, val);
+	}
+	return node;
+}
+
 tree* right_rotate(tree* node_cur) 
 {
 	tree* node1 = node_cur->left;
@@ -87,7 +105,6 @@ tree* search(tree* root, int val)
 	return splay(root, val);
 }
 
-
 tree* search_min(tree* node) 
 {
 	if (node == NULL) {
@@ -129,32 +146,39 @@ tree* delete(tree* node, int val)
 
 
 
-void print(tree* root, int val)
+void print(tree* root, int k)
 {
 	int i;
 	if (root != NULL)
 	{
-		print(root->right, val + 1);
-		for (i = 0; i < val; i++) { 
+		print(root->right, k + 1);
+		for (i = 0; i < k; i++) { 
 			putchar(' ');
 		}
 		printf("%d\n", root->n);
-		print(root->left, val + 1);
+		print(root->left, k + 1);
 	}
 }
+
+
 int main() {
 	puts("Krekhov_d_5030102_20003_lab2_var8\n");
-	tree* root = create(1);
-	root->left = create(2);
-	root->right = create(3);
-	root->left->left = create(4);
-	root->left->left->left = create(5);
-	root->left->left->left->left = create(6);
-	print(root, 1);
-	root = search(root, 5);
-	printf(" after search\n");
-	print(root, 3);
+	tree* root = create(100);
+	root = insert(root, 20);
+	root = insert(root, 30);
+	root = insert(root, 40);
+	root = insert(root, 60);
+	root = insert(root, 70);
+	root = insert(root, 80);
 
+	root = search(root, 20);
+	printf("after search \n");
+
+	print(root, 1);
+	root = search(root, 40);
+	printf("after search\n");
+	print(root, 1);
+	return 0;
 
 	return 0;
 }
